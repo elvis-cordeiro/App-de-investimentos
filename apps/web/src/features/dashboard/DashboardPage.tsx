@@ -23,6 +23,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { OpportunityCard } from '../../components/cards/OpportunityCard';
 import { NewsCard } from '../../components/cards/NewsCard';
 import { AddTransactionModal } from '../../components/ui/AddTransactionModal';
+import { AdvisorWidget } from '../../components/ui/AdvisorWidget';
 
 export const DashboardPage: React.FC = () => {
   const [tickerFilter, setTickerFilter] = useState<string>('ALL');
@@ -107,6 +108,9 @@ export const DashboardPage: React.FC = () => {
           />
         </div>
       </section>
+
+      {/* BLOCO INTELIGÊNCIA: DollarPath Intelligence (Advisor) */}
+      <AdvisorWidget />
 
       {/* BLOCO 3: Oportunidades em Destaque (Visual Carrossel / Grid) */}
       <section className="space-y-4">

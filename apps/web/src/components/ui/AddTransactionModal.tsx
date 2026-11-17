@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Plus, AlertCircle, CheckCircle } from 'lucide-react';
 import { PortfolioService } from '../../lib/portfolioService';
+import { IntelligenceService } from '../../lib/intelligenceService';
 import { TransactionType } from '@dollarpath/shared';
 
 interface AddTransactionModalProps {
@@ -52,6 +53,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
     }
 
     try {
+      const activeFX = isNaN(fx) ? defaultExchangeRate : fx;
       PortfolioService.addTransaction({
         assetId,
         type,
@@ -59,10 +61,38 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
         quantity: qty,
         unitPrice: price,
         currency: 'USD',
-        exchangeRate: isNaN(fx) ? defaultExchangeRate : fx,
+        exchangeRate: activeFX,
         fees: isNaN(feeVal) ? 0 : feeVal,
         notes: notes.trim() || undefined,
       });
+
+      // Avaliação inteligente de impacto pelo Advisor (Critério Seção 6.4 & 14)
+      const budget = PortfolioService.getBudget();
+      const totalAmountBRL = (qty * price) * activeFX;
+      const asset = assets.find(a => a.id === assetId);
+
+      const impact = IntelligenceService.evaluateTransactionImpact(
+        type,
+        totalAmountBRL,
+        budget.plannedInvestment
+      );
+
+      // Registrar no histórico auditável caso tenha impacto material
+      if (impact.eventType !== 'ADDITIONAL_CONTRIBUTION' || totalAmountBRL > budget.plannedInvestment * 1.5) {
+        IntelligenceService.addDecisionLog({
+          timestamp: new Date().toISOString(),
+          eventType: impact.eventType,
+          description: `Operação de ${type === 'BUY' ? 'compra' : 'venda'} de ${qty} ${asset?.ticker} por $${price.toFixed(2)} USD (R$ ${totalAmountBRL.toFixed(2)}).`,
+          advisorExplanation: impact.advisorMessage,
+          effects: {
+            contributionDelta: type === 'BUY' ? totalAmountBRL - budget.plannedInvestment : -totalAmountBRL,
+            assetPerformanceDelta: 0,
+            fxDelta: 0,
+          },
+          alternatives: impact.alternatives,
+          userDecision: notes.trim() || 'Operação registrada pelo usuário.',
+        });
+      }
 
       onSuccess();
     } catch (err: any) {

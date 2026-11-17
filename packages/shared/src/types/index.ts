@@ -134,3 +134,74 @@ export interface Goal {
   targetDate?: string;
   notes?: string;
 }
+
+/* =========================================================================
+ * DollarPath Intelligence (Advisor & Important Alerts) - Specification v1.1
+ * ========================================================================= */
+
+export type FinancialEventType =
+  | 'PLANNED_CONTRIBUTION_MISSED' // Aporte planejado não realizado na janela
+  | 'CONTRIBUTION_BELOW_PLANNED'  // Aporte realizado abaixo do previsto
+  | 'WITHDRAWAL_OR_SALE'          // Redução de capital por retirada ou venda
+  | 'ADDITIONAL_CONTRIBUTION'     // Aporte extraordinário ou acima do planejado
+  | 'ASSUMPTION_CHANGED';         // Mudança relevante em câmbio, prazos ou premissas
+
+export interface DecisionLog {
+  id: string;
+  timestamp: string;
+  eventType: FinancialEventType;
+  description: string;
+  advisorExplanation: string;
+  effects: {
+    contributionDelta: number; // Impacto do aporte ou retirada
+    assetPerformanceDelta: number; // Efeito da rentabilidade dos ativos
+    fxDelta: number; // Efeito cambial USD/BRL
+  };
+  alternatives: string[]; // Sugestões realistas e não punitivas
+  userDecision?: string; // Decisão adotada pelo usuário
+  recordedAt: string;
+}
+
+export type AlertPriority = 'IMPORTANT' | 'INFO';
+
+export interface Alert {
+  id: string;
+  title: string;
+  message: string;
+  priority: AlertPriority;
+  category: 'GOAL' | 'CONTRIBUTION' | 'ALLOCATION' | 'ASSUMPTION';
+  createdAt: string;
+  read: boolean;
+  actionUrl?: string;
+  metadata?: {
+    diffAmount?: number;
+    delayMonths?: number;
+    assetTicker?: string;
+    [key: string]: any;
+  };
+}
+
+export type ScenarioType = 'CONSERVATIVE' | 'BASE' | 'OPTIMISTIC';
+
+export interface ProjectionScenario {
+  type: ScenarioType;
+  name: string;
+  expectedAnnualReturnUSD: number; // % ao ano em dólar
+  monthlyContributionBRL: number; // R$ mensal
+  exchangeRate: number; // R$ por USD
+  timelineYears: number; // Anos
+  projectedFinalValueUSD: number;
+  projectedFinalValueBRL: number;
+  requiredMonthlyContributionBRL: number; // Aporte mensal necessário para manter prazo
+  estimatedYearsToReachGoal: number; // Prazo projetado mantendo o aporte atual
+  assumptionsNotes: string;
+}
+
+export interface GoalProjection {
+  goalId: string;
+  calculatedAt: string;
+  currentValueBRL: number;
+  targetValueBRL: number;
+  scenarios: ProjectionScenario[];
+  advisorAssessment: string;
+}

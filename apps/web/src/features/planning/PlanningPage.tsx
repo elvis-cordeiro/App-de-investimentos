@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Calculator, PiggyBank, ShieldCheck, Check, DollarSign, ArrowRight, Save } from 'lucide-react';
 import { PortfolioService } from '../../lib/portfolioService';
+import { DecisionHistorySection } from './DecisionHistorySection';
 
 export const PlanningPage: React.FC = () => {
   const currentBudget = PortfolioService.getBudget();
@@ -176,6 +177,9 @@ export const PlanningPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Decision History Audit Trail (Seção 6.6) */}
+      <DecisionHistorySection />
     </div>
   );
 };

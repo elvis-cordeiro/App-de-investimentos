@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Target, TrendingUp, DollarSign, AlertCircle, ShieldCheck, Sparkles, Sliders } from 'lucide-react';
 import { PortfolioService } from '../../lib/portfolioService';
+import { ScenarioSimulator } from './ScenarioSimulator';
 
 export const GoalsPage: React.FC = () => {
   const goal = PortfolioService.getGoal();
@@ -101,6 +102,9 @@ export const GoalsPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Simulador de Cenários de Longo Prazo (Conservador, Base, Otimista) */}
+      <ScenarioSimulator />
 
       {/* Simulador de Cenários de Renda Futura */}
       <div className="bg-[#0f172a]/80 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-6">

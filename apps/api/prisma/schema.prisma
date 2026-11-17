@@ -30,6 +30,19 @@ enum NewsCategory {
   MARKET_OVERVIEW
 }
 
+enum FinancialEventType {
+  PLANNED_CONTRIBUTION_MISSED
+  CONTRIBUTION_BELOW_PLANNED
+  WITHDRAWAL_OR_SALE
+  ADDITIONAL_CONTRIBUTION
+  ASSUMPTION_CHANGED
+}
+
+enum AlertPriority {
+  IMPORTANT
+  INFO
+}
+
 model Asset {
   id              String        @id @default(uuid())
   ticker          String        @unique
@@ -144,4 +157,63 @@ model Goal {
   notes        String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+
+  projections  GoalProjection[]
+}
+
+/* ========================================================
+ * DollarPath Intelligence - Entities v1.1
+ * ======================================================== */
+
+model DecisionLog {
+  id                 String             @id @default(uuid())
+  timestamp          DateTime           @default(now())
+  eventType          FinancialEventType
+  description        String
+  advisorExplanation String
+  contributionDelta  Decimal            @db.Decimal(18, 2)
+  assetGrowthDelta   Decimal            @db.Decimal(18, 2)
+  fxDelta            Decimal            @db.Decimal(18, 2)
+  alternatives       String[]
+  userDecision       String?
+  recordedAt         DateTime           @default(now())
+}
+
+model Alert {
+  id          String        @id @default(uuid())
+  title       String
+  message     String
+  priority    AlertPriority @default(IMPORTANT)
+  category    String        // GOAL, CONTRIBUTION, ALLOCATION, ASSUMPTION
+  createdAt   DateTime      @default(now())
+  read        Boolean       @default(false)
+  actionUrl   String?
+  metadata    Json?
+}
+
+model GoalProjection {
+  id                String   @id @default(uuid())
+  goalId            String
+  goal              Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  calculatedAt      DateTime @default(now())
+  currentValueBRL   Decimal  @db.Decimal(18, 2)
+  targetValueBRL    Decimal  @db.Decimal(18, 2)
+  advisorAssessment String
+  scenarios         ProjectionScenario[]
+}
+
+model ProjectionScenario {
+  id                             String         @id @default(uuid())
+  projectionId                   String
+  projection                     GoalProjection @relation(fields: [projectionId], references: [id], onDelete: Cascade)
+  name                           String         // Conservador, Base, Otimista
+  expectedAnnualReturnUSD        Decimal        @db.Decimal(5, 2)
+  monthlyContributionBRL         Decimal        @db.Decimal(18, 2)
+  exchangeRate                   Decimal        @db.Decimal(18, 4)
+  timelineYears                  Int
+  projectedFinalValueUSD         Decimal        @db.Decimal(18, 2)
+  projectedFinalValueBRL         Decimal        @db.Decimal(18, 2)
+  requiredMonthlyContributionBRL Decimal        @db.Decimal(18, 2)
+  estimatedYearsToReachGoal      Decimal        @db.Decimal(5, 2)
+  assumptionsNotes               String
 }

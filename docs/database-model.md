@@ -1,171 +1,20 @@
-# DollarPath - Modelo de Banco de Dados (Prisma & PostgreSQL)
+# DollarPath — Modelo de Banco de Dados Relacional (v1.1)
 
-O modelo de dados segue o princípio de **rastreabilidade e consistência financeira**:
-- Todos os campos monetários utilizam `Decimal(18, 4)` para evitar problemas de arredondamento com float.
-- O saldo e o preço médio das posições são calculados a partir das transações registradas, mantendo auditoria completa.
-- Separação entre dados externos (cotações, notícias coletadas) e entradas do investidor.
+O modelo de dados do DollarPath foi atualizado para suportar nativamente o **DollarPath Intelligence (Advisor)** e a política de notificações **Important**.
 
-## Entidades Principais
+## Entidades e Mapeamento
 
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-enum AssetType {
-  STOCK
-  ETF
-  REIT
-  CRYPTO
-  CASH
-}
-
-enum TransactionType {
-  BUY
-  SELL
-  DIVIDEND
-  FEE
-  EXCHANGE
-}
-
-enum NewsCategory {
-  URGENT
-  PORTFOLIO
-  OPPORTUNITY
-  MARKET_OVERVIEW
-}
-
-model Asset {
-  id              String        @id @default(uuid())
-  ticker          String        @unique
-  name            String
-  type            AssetType     @default(STOCK)
-  sector          String
-  currency        String        @default("USD")
-  country         String        @default("US")
-  status          String        @default("ACTIVE")
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  transactions    Transaction[]
-  dividends       Dividend[]
-  newsRelations   NewsAsset[]
-  opportunities   Opportunity[]
-  contributionPlans ContributionPlan[]
-}
-
-model Transaction {
-  id              String          @id @default(uuid())
-  assetId         String
-  asset           Asset           @relation(fields: [assetId], references: [id])
-  type            TransactionType
-  date            DateTime
-  quantity        Decimal         @db.Decimal(18, 6)
-  unitPrice       Decimal         @db.Decimal(18, 4)
-  currency        String          @default("USD")
-  exchangeRate    Decimal?        @db.Decimal(18, 4) // BRL por USD
-  fees            Decimal?        @db.Decimal(18, 4)
-  notes           String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-}
-
-model MonthlyBudget {
-  id                      String    @id @default(uuid())
-  month                   String    @unique // Formato: YYYY-MM
-  income                  Decimal   @db.Decimal(18, 2)
-  expenses                Decimal   @db.Decimal(18, 2)
-  emergencyReserveBalance Decimal   @db.Decimal(18, 2)
-  plannedInvestment       Decimal   @db.Decimal(18, 2)
-  currency                String    @default("BRL")
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
-}
-
-model ContributionPlan {
-  id               String   @id @default(uuid())
-  assetId          String
-  asset            Asset    @relation(fields: [assetId], references: [id])
-  targetPercentage Decimal? @db.Decimal(5, 2)
-  targetValue      Decimal? @db.Decimal(18, 2)
-  priority         Int      @default(1)
-  isActive         Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-}
-
-model Dividend {
-  id             String    @id @default(uuid())
-  assetId        String
-  asset          Asset     @relation(fields: [assetId], references: [id])
-  exDate         DateTime
-  paymentDate    DateTime
-  amountPerShare Decimal   @db.Decimal(18, 4)
-  quantity       Decimal   @db.Decimal(18, 6)
-  totalAmount    Decimal   @db.Decimal(18, 4)
-  currency       String    @default("USD")
-  createdAt      DateTime  @default(now())
-}
-
-model NewsArticle {
-  id                        String       @id @default(uuid())
-  title                     String
-  summary                   String
-  analysis                  String?
-  isInterpretationConfirmed Boolean      @default(false)
-  source                    String
-  url                       String
-  publishedAt               DateTime
-  collectedAt               DateTime     @default(now())
-  imageUrl                  String?
-  category                  NewsCategory @default(MARKET_OVERVIEW)
-  isBreaking                Boolean      @default(false)
-  status                    String       @default("ACTIVE")
-
-  assets                    NewsAsset[]
-}
-
-model NewsAsset {
-  newsId      String
-  assetId     String
-  relevance   Int          @default(1) // 1-5
-  relation    String?      // ex: "DIRECT", "SECTOR", "COMPETITOR"
-
-  news        NewsArticle  @relation(fields: [newsId], references: [id], onDelete: Cascade)
-  asset       Asset        @relation(fields: [assetId], references: [id], onDelete: Cascade)
-
-  @@id([newsId, assetId])
-}
-
-model Opportunity {
-  id           String    @id @default(uuid())
-  ticker       String
-  assetId      String?
-  asset        Asset?    @relation(fields: [assetId], references: [id])
-  thesis       String
-  sector       String
-  score        Decimal?  @db.Decimal(5, 2)
-  risks        String[]
-  catalysts    String[]
-  radarStyle   String    @default("GROWTH_WITH_FUNDAMENTALS")
-  reviewDate   DateTime  @default(now())
-  status       String    @default("ACTIVE")
-}
-
-model Goal {
-  id           String    @id @default(uuid())
-  name         String
-  targetValue  Decimal   @db.Decimal(18, 2)
-  currentValue Decimal   @db.Decimal(18, 2)
-  currency     String    @default("BRL")
-  deadlineYears Int
-  notes        String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-}
-```
+1. **Asset**: Cadastros de ativos em USD (stocks, ETFs, REITs).
+2. **Transaction**: Histórico de ordens (BUY, SELL, DIVIDEND, FEE, EXCHANGE) que alimentam os saldos de forma auditável.
+3. **MonthlyBudget**: Parâmetros de receitas, despesas, reserva de emergência e aporte mensal de referência (R$ 300).
+4. **Goal**: Metas financeiras de longo prazo (ex: R$ 300.000 em 10 anos).
+5. **GoalProjection & ProjectionScenario**:
+   - Guarda a fotografia das premissas utilizadas em cada cálculo (Cenários Conservador, Base e Otimista).
+   - Registra o aporte mensal necessário e o prazo projetado.
+6. **DecisionLog**:
+   - Registro permanente e auditável dos eventos financeiros detectados pelo sistema (ex: aporte não realizado, retirada, alteração de câmbio).
+   - Armazena a explicação detalhada do Advisor e a decomposição dos efeitos ($\Delta \text{Aportes}$, $\Delta \text{Rentabilidade}$, $\Delta \text{Câmbio}$).
+   - Armazena as alternativas apresentadas e a escolha do usuário.
+7. **Alert**:
+   - Central de notificações do sistema aplicando a política de relevância `Important`.
+   - Evita ruído por movimentações rotineiras e foca em desvios materiais do plano.

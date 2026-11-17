@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { PortfolioService } from '../../lib/portfolioService';
 import { AddTransactionModal } from '../ui/AddTransactionModal';
+import { NotificationCenter } from '../ui/NotificationCenter';
 
 interface AppShellProps {
   onRefreshData?: () => void;
@@ -155,6 +156,9 @@ export const AppShell: React.FC<AppShellProps> = ({ onRefreshData }) => {
                 <span className="font-semibold text-slate-100">R$ {exchangeRate.toFixed(2)}</span>
               </div>
             </div>
+
+            {/* Notification Center */}
+            <NotificationCenter onUpdate={onRefreshData} />
 
             {/* Quick action button */}
             <button
