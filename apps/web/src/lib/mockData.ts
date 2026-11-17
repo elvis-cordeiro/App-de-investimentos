@@ -1,0 +1,360 @@
+import { Asset, Transaction, Opportunity, NewsArticle, MonthlyBudget, Goal } from '@dollarpath/shared';
+
+export const INITIAL_EXCHANGE_RATE = 5.72; // USD to BRL reference
+
+export const INITIAL_ASSETS: Asset[] = [
+  {
+    id: 'asset-nvda',
+    ticker: 'NVDA',
+    name: 'NVIDIA Corporation',
+    type: 'STOCK',
+    sector: 'Semicondutores e IA',
+    currency: 'USD',
+    country: 'US',
+    status: 'ACTIVE',
+    currentPrice: 142.50,
+    priceUpdatedAt: '2026-11-17T11:00:00Z',
+  },
+  {
+    id: 'asset-cvx',
+    ticker: 'CVX',
+    name: 'Chevron Corporation',
+    type: 'STOCK',
+    sector: 'Energia e Petróleo',
+    currency: 'USD',
+    country: 'US',
+    status: 'ACTIVE',
+    currentPrice: 158.20,
+    priceUpdatedAt: '2026-11-17T11:00:00Z',
+  },
+  {
+    id: 'asset-mu',
+    ticker: 'MU',
+    name: 'Micron Technology, Inc.',
+    type: 'STOCK',
+    sector: 'Memória e Semicondutores',
+    currency: 'USD',
+    country: 'US',
+    status: 'ACTIVE',
+    currentPrice: 108.40,
+    priceUpdatedAt: '2026-11-17T11:00:00Z',
+  },
+  {
+    id: 'asset-amzn',
+    ticker: 'AMZN',
+    name: 'Amazon.com, Inc.',
+    type: 'STOCK',
+    sector: 'E-commerce, Cloud & IA',
+    currency: 'USD',
+    country: 'US',
+    status: 'ACTIVE',
+    currentPrice: 204.10,
+    priceUpdatedAt: '2026-11-17T11:00:00Z',
+  },
+];
+
+export const INITIAL_TRANSACTIONS: Transaction[] = [
+  {
+    id: 'tx-1',
+    assetId: 'asset-nvda',
+    type: 'BUY',
+    date: '2026-08-15',
+    quantity: 4.5,
+    unitPrice: 122.80,
+    currency: 'USD',
+    exchangeRate: 5.65,
+    fees: 1.5,
+    notes: 'Aporte mensal planejado - foco em infraestrutura de IA',
+    createdAt: '2026-08-15T14:30:00Z',
+  },
+  {
+    id: 'tx-2',
+    assetId: 'asset-cvx',
+    type: 'BUY',
+    date: '2026-09-10',
+    quantity: 3.0,
+    unitPrice: 151.40,
+    currency: 'USD',
+    exchangeRate: 5.68,
+    fees: 1.5,
+    notes: 'Diversificação defensiva e geração de proventos em dólar',
+    createdAt: '2026-09-10T15:00:00Z',
+  },
+  {
+    id: 'tx-3',
+    assetId: 'asset-mu',
+    type: 'BUY',
+    date: '2026-10-05',
+    quantity: 5.0,
+    unitPrice: 94.20,
+    currency: 'USD',
+    exchangeRate: 5.70,
+    fees: 1.5,
+    notes: 'Posicionamento em ciclo de memórias HBM para data centers',
+    createdAt: '2026-10-05T16:15:00Z',
+  },
+  {
+    id: 'tx-4',
+    assetId: 'asset-amzn',
+    type: 'BUY',
+    date: '2026-11-01',
+    quantity: 2.5,
+    unitPrice: 191.00,
+    currency: 'USD',
+    exchangeRate: 5.74,
+    fees: 1.5,
+    notes: 'Crescimento de AWS e expansão de margens operacionais',
+    createdAt: '2026-11-01T13:45:00Z',
+  },
+];
+
+export const INITIAL_OPPORTUNITIES: Opportunity[] = [
+  {
+    id: 'opp-nvda',
+    ticker: 'NVDA',
+    name: 'NVIDIA Corporation',
+    sector: 'Semicondutores & IA',
+    thesis: 'Liderança incontestada na arquitetura computacional para modelos de linguagem e data centers de IA acelerada, com ecossistema CUDA consolidado.',
+    risks: [
+      'Valuation elevado exigindo taxas contínuas de hipercrescimento',
+      'Restrições de exportação de chips avançados para a Ásia',
+      'Dependência de capacidade de fundição na TSMC'
+    ],
+    catalysts: [
+      'Adoção massiva de clusters Blackwell B200 por hyperscalers (AWS, Azure, Google Cloud)',
+      'Aumento da demanda corporativa por IA soberana e modelos locais'
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=800&q=80',
+    score: 88,
+    scoreDetails: {
+      growth: 96,
+      quality: 94,
+      balanceSheet: 92,
+      valuation: 68,
+      catalysts: 90,
+      riskLevel: 'MEDIUM',
+    },
+    radarStyle: 'GROWTH_WITH_FUNDAMENTALS',
+    reviewDate: '2026-11-15',
+    status: 'ACTIVE',
+    financials: {
+      marketCap: '$3.50T',
+      peRatio: 45.2,
+      revenueGrowthYoY: '+94%',
+      netMargin: '55.3%',
+      debtToEquity: '0.18',
+      freeCashFlow: '$26.8B',
+    }
+  },
+  {
+    id: 'opp-mu',
+    ticker: 'MU',
+    name: 'Micron Technology',
+    sector: 'Memória e Semicondutores',
+    thesis: 'Superciclo de memória HBM (High Bandwidth Memory) essencial para chips de aceleração de IA, com capacidade de produção contratada antecipadamente.',
+    risks: [
+      'Ciclicidade histórica do mercado de DRAM e NAND',
+      'Intensidade de capital em transição para litografias extremas'
+    ],
+    catalysts: [
+      'Contratos de longo prazo com fornecedores de superchips',
+      'Expansão de margens brutas com o aumento do mix HBM3E e HBM4'
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80',
+    score: 82,
+    scoreDetails: {
+      growth: 86,
+      quality: 80,
+      balanceSheet: 84,
+      valuation: 78,
+      catalysts: 85,
+      riskLevel: 'MEDIUM',
+    },
+    radarStyle: 'GROWTH_WITH_FUNDAMENTALS',
+    reviewDate: '2026-11-12',
+    status: 'ACTIVE',
+    financials: {
+      marketCap: '$120B',
+      peRatio: 18.5,
+      revenueGrowthYoY: '+60%',
+      netMargin: '18.7%',
+      debtToEquity: '0.32',
+      freeCashFlow: '$4.2B',
+    }
+  },
+  {
+    id: 'opp-amzn',
+    ticker: 'AMZN',
+    name: 'Amazon.com',
+    sector: 'Cloud & Inteligência Artificial',
+    thesis: 'Aceleração consistente da AWS impulsionada por serviços de IA generativa (Bedrock, chips Trainium), combinada com otimização contínua de custos de entrega e ads de alta margem.',
+    risks: [
+      'Concorrência acirrada no segmento de nuvem pública',
+      'Desaceleração do consumo discricionário em mercados maduros'
+    ],
+    catalysts: [
+      'Crescimento da margem operacional acima do consenso',
+      'Contratos governamentais e corporativos de infraestrutura em nuvem'
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
+    score: 85,
+    scoreDetails: {
+      growth: 84,
+      quality: 88,
+      balanceSheet: 90,
+      valuation: 76,
+      catalysts: 86,
+      riskLevel: 'LOW',
+    },
+    radarStyle: 'GROWTH_WITH_FUNDAMENTALS',
+    reviewDate: '2026-11-14',
+    status: 'ACTIVE',
+    financials: {
+      marketCap: '$2.12T',
+      peRatio: 36.4,
+      revenueGrowthYoY: '+13%',
+      netMargin: '9.4%',
+      debtToEquity: '0.45',
+      freeCashFlow: '$48.1B',
+    }
+  },
+  {
+    id: 'opp-cvx',
+    ticker: 'CVX',
+    name: 'Chevron Corporation',
+    sector: 'Energia & Petróleo',
+    thesis: 'Geração robusta de fluxo de caixa livre no Permian Basin, balanço entre os mais sólidos do setor e histórico de dividendos crescentes há mais de 35 anos.',
+    risks: [
+      'Volatilidade nos preços globais de barris Brent/WTI',
+      'Atrasos na conclusão regulatória de fusões e aquisições'
+    ],
+    catalysts: [
+      'Aumento na taxa de recompra de ações e crescimento dos proventos',
+      'Investimentos em captura de carbono e hidrogênio de baixo custo'
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
+    score: 79,
+    scoreDetails: {
+      growth: 65,
+      quality: 91,
+      balanceSheet: 93,
+      valuation: 82,
+      catalysts: 68,
+      riskLevel: 'LOW',
+    },
+    radarStyle: 'DISCOUNTED',
+    reviewDate: '2026-11-10',
+    status: 'ACTIVE',
+    financials: {
+      marketCap: '$285B',
+      peRatio: 14.1,
+      revenueGrowthYoY: '+4.2%',
+      netMargin: '12.8%',
+      debtToEquity: '0.15',
+      freeCashFlow: '$20.5B',
+    }
+  },
+];
+
+export const INITIAL_NEWS: NewsArticle[] = [
+  {
+    id: 'news-1',
+    title: 'NVIDIA anuncia entrega comercial antecipada dos primeiros racks NVL72 para datacenters',
+    summary: 'A empresa confirmou o início das remessas comerciais da plataforma de supercomputação Blackwell para os principais provedores de nuvem.',
+    analysis: 'FATO CONFIRMADO: Os racks começaram a ser despachados aos clientes conforme cronograma da companhia. // INTERPRETAÇÃO DO SISTEMA: Essa entrega reduz o risco de gargalo de produção para o próximo trimestre fiscal e reforça o poder de precificação da divisão de data centers da NVIDIA, podendo impactar positivamente as estimativas de receita.',
+    isInterpretationConfirmed: false,
+    source: 'Financial Times / TechWire',
+    url: 'https://www.ft.com',
+    publishedAt: '2026-11-17T09:15:00Z',
+    collectedAt: '2026-11-17T09:30:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=800&q=80',
+    category: 'PORTFOLIO',
+    isBreaking: true,
+    relatedTickers: ['NVDA', 'MU'],
+    status: 'ACTIVE',
+  },
+  {
+    id: 'news-2',
+    title: 'Chevron avança em expansão produtiva no Permian e reafirma política de distribuição de proventos',
+    summary: 'A Chevron reportou aumento de 6% na eficiência de perfuração na Bacia do Permiano e indicou sustentabilidade do payout de dividendos mesmo em cenários de petróleo a $70.',
+    analysis: 'FATO CONFIRMADO: Apresentação técnica arquivada na SEC com métricas de custo por barril extraído. // HIPÓTESE DE MERCADO: Analistas de Wall Street projetam continuidade do programa de recompras para o próximo ano fiscal, sem redução dos proventos correntes.',
+    isInterpretationConfirmed: false,
+    source: 'Reuters Energy',
+    url: 'https://www.reuters.com',
+    publishedAt: '2026-11-16T17:40:00Z',
+    collectedAt: '2026-11-16T18:00:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
+    category: 'PORTFOLIO',
+    isBreaking: false,
+    relatedTickers: ['CVX'],
+    status: 'ACTIVE',
+  },
+  {
+    id: 'news-3',
+    title: 'Demanda por memória HBM3E supera previsões das fabricantes para os próximos quatro trimestres',
+    summary: 'Relatório setorial indica que os estoques de memória de alta largura de banda para aceleradores de inteligência artificial continuam contratados com meses de antecedência.',
+    analysis: 'FATO CONFIRMADO: Micron e concorrentes sul-coreanos já venderam a maior parte de sua capacidade alocada de 2026. // INTERPRETAÇÃO: A Micron preserva poder de fixação de margem bruta superior às médias históricas do setor de memórias.',
+    isInterpretationConfirmed: false,
+    source: 'Bloomberg Technology',
+    url: 'https://www.bloomberg.com',
+    publishedAt: '2026-11-16T14:10:00Z',
+    collectedAt: '2026-11-16T14:30:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80',
+    category: 'PORTFOLIO',
+    isBreaking: false,
+    relatedTickers: ['MU', 'NVDA'],
+    status: 'ACTIVE',
+  },
+  {
+    id: 'news-4',
+    title: 'Amazon Web Services expande infraestrutura global de data centers para modelos fundacionais',
+    summary: 'A AWS anunciou novo centro de dados focado em cargas de trabalho de inferência com seus chips próprios Trainium2 e Graviton4.',
+    analysis: 'FATO CONFIRMADO: Comunicado oficial da Amazon com investimentos de US$ 11 bilhões em infraestrutura. // INTERPRETAÇÃO: Redução gradual dos custos de hardware para a Amazon a médio prazo ao mitigar a dependência exclusiva de aceleradores de terceiros.',
+    isInterpretationConfirmed: false,
+    source: 'The Wall Street Journal',
+    url: 'https://www.wsj.com',
+    publishedAt: '2026-11-15T20:00:00Z',
+    collectedAt: '2026-11-15T20:30:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
+    category: 'PORTFOLIO',
+    isBreaking: false,
+    relatedTickers: ['AMZN'],
+    status: 'ACTIVE',
+  },
+  {
+    id: 'news-5',
+    title: 'Federal Reserve sinaliza taxa de juros americana guiada por dados de produtividade e inflação',
+    summary: 'Em declaração recente, o comitê de política monetária dos EUA reforçou postura dependente de dados macroeconômicos, com foco na dinâmica de emprego e produtividade.',
+    analysis: 'PANORAMA DE MERCADO: Juros estáveis ou em trajetória descendente em dólares reduzem o custo de capital para empresas de tecnologia de hipercrescimento e favorecem alocações em ativos de risco com forte fluxo de caixa livre.',
+    isInterpretationConfirmed: false,
+    source: 'CNBC Markets',
+    url: 'https://www.cnbc.com',
+    publishedAt: '2026-11-15T12:00:00Z',
+    collectedAt: '2026-11-15T12:30:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80',
+    category: 'MARKET_OVERVIEW',
+    isBreaking: false,
+    relatedTickers: [],
+    status: 'ACTIVE',
+  },
+];
+
+export const INITIAL_BUDGET: MonthlyBudget = {
+  id: 'budget-current',
+  month: '2026-11',
+  income: 4500,
+  expenses: 3800,
+  emergencyReserveBalance: 4000, // Meta citada no PDF de R$ 4.000
+  plannedInvestment: 300, // Aporte mensal de referência citado no PDF
+  currency: 'BRL',
+};
+
+export const INITIAL_GOAL: Goal = {
+  id: 'goal-patrimony',
+  name: 'Independência Financeira em Ativos em Dólar',
+  targetValue: 300000, // R$ 300.000 citados no PDF
+  currentValue: 11438, // Calculado com base nas posições iniciais
+  currency: 'BRL',
+  deadlineYears: 10, // 10 anos citados no PDF
+  notes: 'Horizonte de 10 anos com aportes mensais de R$ 300 sujeitos à disponibilidade e valorização composta em USD.',
+};

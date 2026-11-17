@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: dollarpath_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dollarpath_user
+      POSTGRES_PASSWORD: dollarpath_secure_password
+      POSTGRES_DB: dollarpath_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: dollarpath_api
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+      DATABASE_URL: "postgresql://dollarpath_user:dollarpath_secure_password@db:5432/dollarpath_db?schema=public"
+      FRONTEND_URL: "http://localhost:3000"
+    ports:
+      - "4000:4000"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: dollarpath_web
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+
+volumes:
+  postgres_data:
